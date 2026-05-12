@@ -356,15 +356,16 @@ export default function WordleScreen({ onSuccess }) {
       }
       onAnimationComplete={handleMotionComplete}
       style={{
-        minHeight: '100vh',
+        height: '100vh',
         width: '100%',
         background: '#000',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: '24px 16px 48px',
+        justifyContent: 'center',
+        padding: '20px 16px',
         boxSizing: 'border-box',
+        overflowY: 'auto',
         fontFamily: '"JetBrains Mono", monospace',
       }}
     >
@@ -399,12 +400,12 @@ export default function WordleScreen({ onSuccess }) {
         }
         .wordle-tile-wrap {
           perspective: 1000px;
-          width: 52px;
-          height: 52px;
+          width: 46px;
+          height: 46px;
         }
         .wordle-tile-inner {
-          width: 52px;
-          height: 52px;
+          width: 46px;
+          height: 46px;
           border-width: 2px;
           border-style: solid;
           border-radius: 4px;
@@ -413,7 +414,7 @@ export default function WordleScreen({ onSuccess }) {
           justify-content: center;
           font-family: "Unbounded", sans-serif;
           font-weight: 700;
-          font-size: 1.35rem;
+          font-size: 1.2rem;
           text-transform: uppercase;
           box-sizing: border-box;
         }
@@ -432,7 +433,7 @@ export default function WordleScreen({ onSuccess }) {
         style={{
           fontSize: '9px',
           color: '#4a4a4a',
-          marginBottom: '28px',
+          marginBottom: '12px',
           fontFamily: '"JetBrains Mono", monospace',
         }}
       >
@@ -444,7 +445,7 @@ export default function WordleScreen({ onSuccess }) {
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
-          marginBottom: '16px',
+          marginBottom: '10px',
         }}
       >
         {grid.map((row, ri) => (
@@ -481,20 +482,20 @@ export default function WordleScreen({ onSuccess }) {
 
       <div
         style={{
-          minHeight: '28px',
+          minHeight: '22px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
           fontSize: '12px',
-          marginBottom: '14px',
+          marginBottom: '10px',
           color: winMessageGreen ? GREEN : '#c9c9c9',
         }}
       >
         {message}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {[ROW1, ROW2, ROW3].map((row, idx) => (
           <div
             key={idx}
@@ -519,10 +520,10 @@ export default function WordleScreen({ onSuccess }) {
                     color: '#fff',
                     border: 'none',
                     borderRadius: '4px',
-                    height: '52px',
-                    minWidth: wide ? '56px' : '36px',
-                    padding: wide ? '0 14px' : '0 8px',
-                    fontSize: key === 'ENTER' ? '11px' : '14px',
+                    height: '44px',
+                    minWidth: wide ? '52px' : '32px',
+                    padding: wide ? '0 12px' : '0 6px',
+                    fontSize: key === 'ENTER' ? '10px' : '13px',
                     fontWeight: 500,
                     cursor: 'pointer',
                   }}

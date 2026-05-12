@@ -116,11 +116,9 @@ export const config = {
     tinkren: "https://tinkren.com/"
   },
   status: {
-    lines: [],
-    editable: true
+    text: "What are you working on? (edit in content.js)"
   },
   updates: {
-    message: "",
-    editable: true
+    message: "Welcome to IshOS v1.0"
   }
 }

@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { config } from '../../content.js'
 import ParticleBackground from './ParticleBackground'
 import Menubar from './Menubar'
 import Dock from './Dock'
 import Sticky from './Sticky'
+import Notification from './Notification'
 import Window from '../ui/Window'
 import ProjectsApp from '../apps/ProjectsApp'
 import ReadmeApp from '../apps/ReadmeApp'
@@ -90,11 +91,17 @@ const APP_CONFIG = {
   },
 }
 
+const CONTACT_EMAIL = 'mcnabtg@gmail.com'
+
 export default function Desktop() {
   const constraintsRef = useRef(null)
   const zSeq = useRef(100)
   const [openApps, setOpenApps] = useState([])
   const [zIndexMap, setZIndexMap] = useState({})
+  const [showContact, setShowContact] = useState(false)
+  const [contactCopied, setContactCopied] = useState(false)
+
+  const particleBackground = useMemo(() => <ParticleBackground />, [])
 
   const focusApp = useCallback((name) => {
     zSeq.current += 1
@@ -119,6 +126,26 @@ export default function Desktop() {
     })
   }, [])
 
+  const copyContactEmail = useCallback(() => {
+    const write = async () => {
+      try {
+        await navigator.clipboard.writeText(CONTACT_EMAIL)
+      } catch {
+        const ta = document.createElement('textarea')
+        ta.value = CONTACT_EMAIL
+        ta.style.position = 'fixed'
+        ta.style.left = '-9999px'
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+      }
+      setContactCopied(true)
+      window.setTimeout(() => setContactCopied(false), 2000)
+    }
+    void write()
+  }, [])
+
   return (
     <div
       aria-label={config.meta.os}
@@ -132,7 +159,7 @@ export default function Desktop() {
         background: '#080808',
       }}
     >
-      <ParticleBackground />
+      {particleBackground}
       <Menubar />
       <div
         ref={constraintsRef}
@@ -199,14 +226,8 @@ export default function Desktop() {
         <Sticky
           label="📌 status"
           position={{ top: 20, right: 20 }}
-          defaultText="What are you working on?"
+          text={config.status.text}
           rotation={-1.5}
-        />
-        <Sticky
-          label="📢 updates"
-          position={{ bottom: 74, right: 20 }}
-          defaultText="Any updates to share?"
-          rotation={1.2}
         />
 
         {openApps.map((name) => {
@@ -257,7 +278,110 @@ export default function Desktop() {
           )
         })}
       </div>
-      <Dock openApp={openApp} openApps={openApps} />
+      <Dock
+        openApp={openApp}
+        onContactClick={() => setShowContact(true)}
+      />
+      <Notification message={config.updates.message} />
+
+      {showContact ? (
+        <div
+          role="presentation"
+          onClick={() => setShowContact(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 500,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: '#101010',
+              border: '1px solid #383838',
+              borderRadius: '12px',
+              padding: '32px 40px',
+              textAlign: 'center',
+              minWidth: '320px',
+            }}
+          >
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={() => setShowContact(false)}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '16px',
+                fontSize: '18px',
+                color: '#5a5a5a',
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                lineHeight: 1,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#efefef'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#5a5a5a'
+              }}
+            >
+              ×
+            </button>
+            <div
+              style={{
+                fontFamily: '"Unbounded", sans-serif',
+                fontSize: '16px',
+                color: '#efefef',
+                marginBottom: '10px',
+              }}
+            >
+              Always open for a convo.
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={copyContactEmail}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  copyContactEmail()
+                }
+              }}
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: '13px',
+                color: '#ff3d00',
+                marginBottom: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              {CONTACT_EMAIL}
+            </div>
+            <div
+              onClick={copyContactEmail}
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: '9px',
+                color: contactCopied ? '#00e676' : '#5a5a5a',
+                cursor: 'pointer',
+              }}
+            >
+              {contactCopied ? 'copied ✓' : 'click to copy'}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

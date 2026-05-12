@@ -21,7 +21,7 @@ function DockItem({ children, label, onClick }) {
   )
 }
 
-export default function Dock({ openApp }) {
+export default function Dock({ openApp, onContactClick }) {
   return (
     <div style={{ position:'fixed', bottom:0, left:0, right:0, height:52, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(18,18,18,0.82)', borderTop:'1px solid #383838', backdropFilter:'blur(20px)', zIndex:200, paddingBottom:4 }}>
       <div style={{ display:'flex', flexDirection:'row', alignItems:'center', gap:10 }}>
@@ -31,6 +31,7 @@ export default function Dock({ openApp }) {
             label={link.label}
             onClick={() => {
               if (link.action === 'booklog') { openApp('booklog'); return }
+              if (link.label === 'Gmail') { onContactClick(); return }
               if (link.action.startsWith('mailto')) { window.location.href = link.action; return }
               window.open(link.action, '_blank', 'noopener,noreferrer')
             }}

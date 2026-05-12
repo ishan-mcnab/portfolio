@@ -15,13 +15,8 @@ export default function Window({
   return (
     <>
       <style>{`
-        .ishos-window-scroll::-webkit-scrollbar {
-          width: 4px;
-        }
-        .ishos-window-scroll::-webkit-scrollbar-thumb {
-          background: #383838;
-          border-radius: 2px;
-        }
+        .ishos-window-scroll::-webkit-scrollbar { width: 4px; }
+        .ishos-window-scroll::-webkit-scrollbar-thumb { background: #383838; border-radius: 2px; }
       `}</style>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -32,7 +27,10 @@ export default function Window({
         dragControls={dragControls}
         dragConstraints={dragConstraintsRef}
         dragMomentum={false}
-        onPointerDown={() => onFocus()}
+        whileTap={undefined}
+        onPointerDown={(e) => {
+          onFocus()
+        }}
         style={{
           position: 'absolute',
           left: defaultPosition.x,
@@ -52,10 +50,8 @@ export default function Window({
           minHeight: 120,
         }}
       >
+        {/* TITLEBAR */}
         <div
-          onPointerDown={(e) => {
-            dragControls.start(e)
-          }}
           style={{
             height: '38px',
             flexShrink: 0,
@@ -64,15 +60,25 @@ export default function Window({
             display: 'flex',
             alignItems: 'center',
             padding: '0 12px',
-            gap: '10px',
-            cursor: 'grab',
+            gap: '8px',
+            position: 'relative',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* TRAFFIC LIGHTS */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              flexShrink: 0,
+              position: 'relative',
+              zIndex: 10,
+            }}
+          >
             <button
-              type="button"
-              aria-label="Close"
-              onPointerDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => {
+                e.stopPropagation()
+              }}
               onClick={(e) => {
                 e.stopPropagation()
                 onClose()
@@ -81,45 +87,63 @@ export default function Window({
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
-                border: 'none',
-                padding: 0,
                 background: '#ff5f57',
                 cursor: 'pointer',
+                flexShrink: 0,
               }}
             />
-            <span
+            <div
               style={{
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
                 background: '#febc2e',
-                display: 'inline-block',
+                flexShrink: 0,
               }}
             />
-            <span
+            <div
               style={{
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
                 background: '#28c840',
-                display: 'inline-block',
+                flexShrink: 0,
               }}
             />
           </div>
+
+          {/* DRAG HANDLE — title area only */}
           <div
+            onPointerDown={(e) => {
+              e.stopPropagation()
+              dragControls.start(e)
+            }}
             style={{
               flex: 1,
-              textAlign: 'center',
-              fontFamily: '"JetBrains Mono", monospace',
-              fontSize: '11px',
-              color: '#5a5a5a',
-              pointerEvents: 'none',
+              alignSelf: 'stretch',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'grab',
             }}
           >
-            {title}
+            <span
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: '11px',
+                color: '#5a5a5a',
+                pointerEvents: 'none',
+              }}
+            >
+              {title}
+            </span>
           </div>
-          <div style={{ width: '52px', flexShrink: 0 }} aria-hidden />
+
+          {/* SPACER to balance traffic lights */}
+          <div style={{ width: '52px', flexShrink: 0 }} />
         </div>
+
+        {/* CONTENT */}
         <div
           className="ishos-window-scroll"
           style={{

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import Particles, { initParticlesEngine } from '@tsparticles/react'
 import { loadSlim } from '@tsparticles/slim'
 
-export default function ParticleBackground() {
+export default memo(function ParticleBackground() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -66,4 +66,4 @@ export default function ParticleBackground() {
       )}
     </div>
   )
-}
+})

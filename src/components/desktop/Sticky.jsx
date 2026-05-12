@@ -1,12 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
-export default function Sticky({
-  label,
-  position,
-  defaultText,
-  rotation,
-}) {
+export default function Sticky({ label, position, text, rotation }) {
   const [hover, setHover] = useState(false)
 
   return (
@@ -45,23 +40,18 @@ export default function Sticky({
       >
         {label}
       </div>
-      <textarea
-        placeholder={defaultText}
+      <div
         style={{
-          border: 'none',
-          outline: 'none',
-          background: 'transparent',
+          width: '160px',
+          minHeight: '80px',
           color: '#111',
           fontFamily: '"JetBrains Mono", monospace',
           fontSize: '11px',
           lineHeight: 1.8,
-          resize: 'none',
-          width: '160px',
-          minHeight: '80px',
-          padding: 0,
-          margin: 0,
         }}
-      />
+      >
+        {text}
+      </div>
     </motion.div>
   )
 }
