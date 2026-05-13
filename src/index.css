@@ -1,19 +1,113 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
-body {
-  margin: 0;
+:root {
+  --tva-amber: #E8651A;
+  --tva-amber-dim: #A84010;
+  --tva-amber-bright: #F5923A;
+  --tva-amber-glow: rgba(232,101,26,0.15);
+  --tva-bg: #060d0f;
+  --tva-bg2: #0a1518;
+  --tva-bg3: #0f1e22;
+  --tva-border: rgba(232,101,26,0.3);
+  --tva-border-bright: rgba(232,101,26,0.6);
+  --tva-scanline: rgba(0,0,0,0.15);
+  --tva-mono: 'Share Tech Mono', monospace;
+  --tva-display: 'VT323', monospace;
+  --tva-logo: 'Unbounded', sans-serif;
+}
+
+html, body, #root {
+  width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #080808;
+  background: var(--tva-bg);
+  color: var(--tva-amber);
+  font-family: var(--tva-mono);
 }
 
-body {
-  font-family: 'DM Sans', sans-serif;
+/* CRT SCANLINES — fixed overlay over entire viewport */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--tva-scanline) 0px,
+    var(--tva-scanline) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
 }
 
-#root {
-  height: 100%;
+/* CRT GRID — subtle grid over entire viewport */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(232,101,26,0.04) 29px, rgba(232,101,26,0.04) 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, rgba(232,101,26,0.04) 29px, rgba(232,101,26,0.04) 30px);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* CRT FLICKER ANIMATION */
+@keyframes tvaFlicker {
+  0%   { opacity: 1; }
+  92%  { opacity: 1; }
+  93%  { opacity: 0.85; }
+  94%  { opacity: 1; }
+  96%  { opacity: 0.9; }
+  97%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* CONTENT PANEL FADE-IN WITH CRT FLICKER */
+@keyframes tvaContentReveal {
+  0%   { opacity: 0; }
+  20%  { opacity: 0.7; }
+  35%  { opacity: 0.3; }
+  50%  { opacity: 0.85; }
+  65%  { opacity: 0.5; }
+  80%  { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+
+.tva-reveal {
+  animation: tvaContentReveal 0.6s ease forwards;
+}
+
+/* AMBER GLOW ON ACTIVE ELEMENTS */
+@keyframes tvaGlow {
+  0%, 100% { text-shadow: 0 0 8px var(--tva-amber), 0 0 16px rgba(232,101,26,0.4); }
+  50%       { text-shadow: 0 0 12px var(--tva-amber), 0 0 24px rgba(232,101,26,0.6); }
+}
+
+.tva-glow {
+  animation: tvaGlow 2s ease-in-out infinite;
+}
+
+/* STAGGER ENTRANCE */
+@keyframes ishosSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ishos-enter {
+  opacity: 0;
+  animation: ishosSlideUp 0.5s ease forwards;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--tva-amber-dim); border-radius: 2px; }
+
+/* GLOBAL FONT SIZE INCREASES */
+:root {
+  --tva-font-body: 14px;
+  --tva-font-small: 12px;
+  --tva-font-tiny: 11px;
 }

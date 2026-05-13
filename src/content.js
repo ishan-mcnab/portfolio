@@ -5,8 +5,34 @@ export const config = {
     version: "1.0",
     wordle_word: "ISHAN"
   },
-  projects: [],
-  failures: [],
+  projects: [
+    {
+      name: "TWOKME",
+      status: "shipped",
+      desc: "Leveled basketball training based around a 2K avatar of your play style and skill set.",
+      stack: "React + Supabase",
+      meta: "MVP ✓",
+      link: "https://twokme.vercel.app"
+    },
+    {
+      name: "PORTAL RUN",
+      status: "shipped",
+      desc: "3-level alien platformer game, created with Kelvin A. Won 1st in Game Design at Morehouse SMASH showcase.",
+      stack: "Game Design",
+      meta: "1st Place ✓",
+      link: "https://www.linkedin.com/feed/update/urn:li:activity:7353967438801047552/"
+    }
+  ],
+  failures: [
+    { id: "01", title: "Postponed Rover One MVP", desc: "Lack of time forced a delay on the Rover One build.", year: "Jan 2026" },
+    { id: "02", title: "Appalling screen time : productivity ratio", desc: "Fell into a bad pattern. Recognized it. Working on it.", year: "Feb 2026" },
+    { id: "03", title: "Failed to gain Dual Enrollment permission", desc: "Did not receive approval for Dual Enrollment during the 2026-27 school year.", year: "Mar 2026" },
+    { id: "04", title: "Rejected from GTRI internship", desc: "Applied, didn't get it. Filed and moving forward.", year: "Mar 2026" },
+    { id: "05", title: "Unsuccessful Rover One shipments", desc: "Failed to ship Rover One after multiple attempts.", year: "Apr 2026" },
+    { id: "06", title: "Ghosted by ATL SYEP internship", desc: "Facilities Management/Operations opportunity went silent.", year: "Apr 2026" },
+    { id: "07", title: "Rejected by Mott investment competition", desc: "Submitted, didn't advance. Taking notes.", year: "Apr 2026" },
+    { id: "08", title: "Lost passion for YouTube", desc: "Temporary pause on video production. Will return when ready.", year: "Apr 2026" }
+  ],
   bucketList: [],
   cinema: {
     watchlist: [],
@@ -90,8 +116,20 @@ export const config = {
     ]
   },
   music: {
-    favoriteArtists: [],
-    favoriteTracks: [],
+    favoriteArtists: [
+      "Travis Scott",
+      "Harry Styles",
+      "Ken Carson",
+      "Olivia Dean",
+      "JID"
+    ],
+    favoriteTracks: [
+      "Sandstorm — Mereba ft. JID",
+      "Satellite — Harry Styles",
+      "Nice to Each Other — Olivia Dean",
+      "39 Intro — J. Cole",
+      "Can't Punk Me — JID ft. EarthGang"
+    ],
     spotifyUrl: "https://open.spotify.com/user/fkf56byd45x163u60tnzl2prl"
   },
   books: [
@@ -100,7 +138,17 @@ export const config = {
     { title: "Outliers", author: "Malcolm Gladwell", status: "finished", rating: null, progress: 100, finished: "April 2026" },
     { title: "Insights", author: "Chris LoPresti", status: "reading", rating: null, progress: 33, finished: null }
   ],
-  wins: [],
+  wins: [
+    { year: "Jan 2026", text: "Resumed consistent workout routine." },
+    { year: "Jan 2026", text: "Filled and placed whiteboard, goals, and desired achievements for 2026. This year's mantra: \"Next Level.\"" },
+    { year: "Feb 2026", text: "Region Basketball Championship — 2nd place, 7-A D2." },
+    { year: "Mar 2026", text: "Began concept mapping, validation, and production of InHabit app." },
+    { year: "Mar 2026", text: "150K views on YouTube." },
+    { year: "Apr 2026", text: "Accepted to STEP Program (July) @ Georgia Tech." },
+    { year: "Apr 2026", text: "Began planning CBIM Prostate Cancer fundraiser for September 2026." },
+    { year: "Apr 2026", text: "Accepted to Dual Enrollment CS @ Georgia Tech." },
+    { year: "May 2026", text: "Lifting milestones: 35 pushups (PR), 9 pull-ups (PR)." }
+  ],
   readme: {
     whoami: "",
     passions: [],
@@ -116,9 +164,11 @@ export const config = {
     tinkren: "https://tinkren.com/"
   },
   status: {
-    text: "What are you working on? (edit in content.js)"
+    text: "Building and publishing InHabit and Tinkren to scale over the summer. Bulking and lifting until 160 lbs. Studying maths and CS, and chasing leadership opportunities.",
+    editable: true
   },
   updates: {
-    message: "Welcome to IshOS v1.0"
+    message: "ishanmcnab.com is now live! But you already knew that if you're here.",
+    editable: true
   }
 }

@@ -1,30 +1,80 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
-const BOOT_LINES = [
-  'Initializing Sports Module............. ✓',
-  'Loading Music Production............... ✓',
-  'Mounting Projects Directory............ ✓',
-  'Importing Film Database................ ✓',
-  'Calibrating Everything Else............ ✓',
-]
+const LINE1 = 'Well, hey there, sugar!'
+const LINE2 = "Looks like you've been cleared to access Ishan's TemPad."
+const LINE3 = "Tickety-tock — let's get to it!"
+const INIT_LABEL = '[ INITIALIZING... ]'
+
+const TYPE_MS = 40
 
 export default function BootScreen({ onComplete }) {
-  const [fillProgress, setFillProgress] = useState(false)
+  const [finishedLines, setFinishedLines] = useState([])
+  const [typingLine, setTypingLine] = useState('')
+  const [showInit, setShowInit] = useState(false)
+  const [showBar, setShowBar] = useState(false)
+  const [barFilled, setBarFilled] = useState(false)
   const [fadeOut, setFadeOut] = useState(false)
 
   useEffect(() => {
-    const fillTimer = window.setTimeout(() => setFillProgress(true), 1800)
-    const fadeTimer = window.setTimeout(() => setFadeOut(true), 2800)
-    const completeTimer = window.setTimeout(() => {
-      onComplete()
-    }, 3400)
-
-    return () => {
-      window.clearTimeout(fillTimer)
-      window.clearTimeout(fadeTimer)
-      window.clearTimeout(completeTimer)
+    const ids = []
+    const track = (id) => {
+      ids.push(id)
+      return id
     }
+    const q = (fn, delay) => track(window.setTimeout(fn, delay))
+
+    const clearAll = () => {
+      ids.forEach((id) => window.clearTimeout(id))
+    }
+
+    const typeWriter = (full, onDone) => {
+      let i = 0
+      const step = () => {
+        i += 1
+        setTypingLine(full.slice(0, i))
+        if (i >= full.length) {
+          onDone()
+          return
+        }
+        track(window.setTimeout(step, TYPE_MS))
+      }
+      step()
+    }
+
+    q(() => {
+      typeWriter(LINE1, () => {
+        setFinishedLines([LINE1])
+        setTypingLine('')
+        q(() => {
+          typeWriter(LINE2, () => {
+            setFinishedLines([LINE1, LINE2])
+            setTypingLine('')
+            q(() => {
+              typeWriter(LINE3, () => {
+                setFinishedLines([LINE1, LINE2, LINE3])
+                setTypingLine('')
+                q(() => {
+                  setShowInit(true)
+                  q(() => {
+                    setShowBar(true)
+                    q(() => setBarFilled(true), 60)
+                    q(() => {
+                      setFadeOut(true)
+                      q(() => {
+                        onComplete()
+                      }, 600)
+                    }, 60 + 1200 + 400)
+                  }, 600)
+                }, 800)
+              })
+            }, 400)
+          }, 400)
+        }, 400)
+      })
+    }, 800)
+
+    return () => clearAll()
   }, [onComplete])
 
   return (
@@ -35,102 +85,124 @@ export default function BootScreen({ onComplete }) {
       style={{
         minHeight: '100vh',
         width: '100%',
-        background: '#000',
+        background: 'var(--tva-bg)',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: '32px',
+        padding: '40px',
         boxSizing: 'border-box',
       }}
     >
       <div
         style={{
+          position: 'relative',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <div
+          aria-hidden
           style={{
-            fontFamily: '"Unbounded", sans-serif',
-            fontSize: '72px',
-            fontWeight: 700,
-            color: '#fff',
-            lineHeight: 1,
-            marginBottom: '28px',
+            position: 'absolute',
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(232,101,26,0.2) 0%, transparent 70%)',
+            pointerEvents: 'none',
           }}
-        >
-          Ish<span style={{ color: '#ff3d00' }}>OS</span>
-        </div>
-
-        <div
+        />
+        <img
+          src="/miss-minutes.gif"
+          alt="Miss Minutes"
           style={{
-            fontFamily: '"JetBrains Mono", monospace',
-            fontSize: '12px',
-            lineHeight: 1.5,
-            marginBottom: '24px',
-            textAlign: 'left',
+            width: '280px',
+            height: 'auto',
+            objectFit: 'contain',
+            position: 'relative',
+            zIndex: 1,
+            filter: 'drop-shadow(0 0 20px rgba(232,101,26,0.4))',
           }}
-        >
-          {BOOT_LINES.map((line, i) => {
-            const checkIdx = line.lastIndexOf('✓')
-            const textPart = checkIdx >= 0 ? line.slice(0, checkIdx) : line
-            return (
-              <motion.div
-                key={line}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  delay: 0.3 * (i + 1),
-                  duration: 0.15,
-                  ease: 'easeOut',
-                }}
-                style={{ whiteSpace: 'pre' }}
-              >
-                <span style={{ color: '#444' }}>{textPart}</span>
-                <span style={{ color: '#00e676' }}>✓</span>
-              </motion.div>
-            )
-          })}
-        </div>
-
-        <div
-          style={{
-            width: '320px',
-            alignSelf: 'center',
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              height: '1px',
-              background: '#1a1a1a',
-              overflow: 'hidden',
-              marginBottom: '16px',
-            }}
-          >
-            <div
-              style={{
-                height: '100%',
-                width: fillProgress ? '100%' : '0%',
-                background: '#ff3d00',
-                transition: 'width 900ms ease',
-              }}
-            />
-          </div>
-
-          <div
-            style={{
-              fontFamily: '"JetBrains Mono", monospace',
-              fontSize: '10px',
-              color: '#444',
-              letterSpacing: '0.35em',
-              textAlign: 'center',
-            }}
-          >
-            v1.0
-          </div>
-        </div>
+        />
       </div>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px',
+          maxWidth: '500px',
+        }}
+      >
+        {finishedLines.map((line, idx) => (
+          <div
+            key={`done-${idx}`}
+            style={{
+              fontFamily: 'var(--tva-display)',
+              fontSize: '22px',
+              color: 'var(--tva-amber)',
+              textAlign: 'center',
+              lineHeight: 1.6,
+            }}
+          >
+            {line}
+          </div>
+        ))}
+        {typingLine ? (
+          <div
+            style={{
+              fontFamily: 'var(--tva-display)',
+              fontSize: '22px',
+              color: 'var(--tva-amber)',
+              textAlign: 'center',
+              lineHeight: 1.6,
+            }}
+          >
+            {typingLine}
+          </div>
+        ) : null}
+        {showInit ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            style={{
+              fontFamily: 'var(--tva-mono)',
+              fontSize: '12px',
+              letterSpacing: '3px',
+              color: 'var(--tva-amber-dim)',
+              textAlign: 'center',
+              marginTop: '4px',
+            }}
+          >
+            {INIT_LABEL}
+          </motion.div>
+        ) : null}
+      </div>
+
+      {showBar ? (
+        <div
+          style={{
+            width: '280px',
+            height: '2px',
+            background: 'var(--tva-border)',
+            overflow: 'hidden',
+            borderRadius: '1px',
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              width: barFilled ? '100%' : '0%',
+              background: 'var(--tva-amber)',
+              transition: 'width 1200ms ease',
+            }}
+          />
+        </div>
+      ) : null}
     </motion.div>
   )
 }

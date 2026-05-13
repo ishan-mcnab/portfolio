@@ -14,7 +14,7 @@ export default memo(function ParticleBackground() {
   const options = useMemo(
     () => ({
       fullScreen: { enable: false },
-      background: { color: '#080808' },
+      background: { color: '#060d0f' },
       fpsLimit: 60,
       particles: {
         number: { value: 120 },
@@ -54,7 +54,7 @@ export default memo(function ParticleBackground() {
         zIndex: 0,
         width: '100%',
         height: '100%',
-        background: '#080808',
+        background: '#060d0f',
       }}
     >
       {ready && (

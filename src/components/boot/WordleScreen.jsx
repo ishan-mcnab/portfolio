@@ -5,20 +5,19 @@ import { config } from '../../content.js'
 const ROWS = 6
 const COLS = 5
 
-const GREEN = '#538d4e'
-const YELLOW = '#b59f3b'
-const GRAY = '#3a3a3c'
-
 const FLIP_MS = 500
 const STAGGER_MS = 80
 
 const WRONG_MESSAGES = [
-  'Not quite.',
-  'Try again.',
-  'Getting warmer...',
-  'So close.',
-  'One more chance.',
+  'DESIGNATION INCORRECT. TRY AGAIN, VARIANT.',
+  'NEGATIVE. THE SACRED TIMELINE DISAPPROVES.',
+  'INCORRECT. THE TIME-KEEPERS ARE WATCHING.',
+  'STILL WRONG. THIS IS YOUR FINAL WARNING.',
+  'LAST CHANCE, VARIANT. DO NOT PRUNE YOURSELF.',
 ]
+
+const WIN_MESSAGE = 'VARIANT CONFIRMED. CLEARANCE GRANTED.'
+const INVALID_MESSAGE = 'INSUFFICIENT CHARACTERS. INPUT COMPLETE DESIGNATION.'
 
 function emptyGrid() {
   return Array.from({ length: ROWS }, () =>
@@ -74,6 +73,28 @@ function mergeKeyboard(prev, guess, results) {
 const ROW1 = 'QWERTYUIOP'.split('')
 const ROW2 = 'ASDFGHJKL'.split('')
 const ROW3 = ['ENTER', ...'ZXCVBNM'.split(''), 'BACK']
+
+function flipMidVars(st) {
+  if (st === 'correct') {
+    return {
+      '--flip-mid-bg': 'var(--tva-amber)',
+      '--flip-mid-border': 'var(--tva-amber)',
+      '--flip-mid-color': 'var(--tva-bg)',
+    }
+  }
+  if (st === 'present') {
+    return {
+      '--flip-mid-bg': 'var(--tva-amber-dim)',
+      '--flip-mid-border': 'var(--tva-amber-dim)',
+      '--flip-mid-color': 'var(--tva-amber-bright)',
+    }
+  }
+  return {
+    '--flip-mid-bg': 'var(--tva-bg3)',
+    '--flip-mid-border': 'var(--tva-bg3)',
+    '--flip-mid-color': 'var(--tva-amber-dim)',
+  }
+}
 
 export default function WordleScreen({ onSuccess }) {
   const secret = useMemo(
@@ -135,7 +156,7 @@ export default function WordleScreen({ onSuccess }) {
 
       if (isWin) {
         setGameOver(true)
-        setMessage('Access granted. Welcome.')
+        setMessage(WIN_MESSAGE)
         fadeExitPendingRef.current = true
         pushTimeout(() => setScreenFadeOut(true), 1200)
         return
@@ -143,7 +164,7 @@ export default function WordleScreen({ onSuccess }) {
 
       if (rowIdx === ROWS - 1) {
         setGameOver(true)
-        setMessage(`It was ${secret}.`)
+        setMessage(`DESIGNATION WAS: ${secret} // GRANTING ACCESS ANYWAY.`)
         pushTimeout(() => {
           onSuccess()
         }, 1500)
@@ -169,7 +190,7 @@ export default function WordleScreen({ onSuccess }) {
 
     if (guess.length < COLS) {
       setIsShaking(true)
-      setMessage('Not enough letters')
+      setMessage(INVALID_MESSAGE)
       pushTimeout(() => setIsShaking(false), 400)
       pushTimeout(() => setMessage(''), 2000)
       return
@@ -256,17 +277,34 @@ export default function WordleScreen({ onSuccess }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [addLetter, backspace, gameOver, screenFadeOut, submitGuess])
 
-  const keyBg = (key) => {
+  const keyStyle = (key) => {
     const st = keyboardColors[key]
-    if (st === 'correct') return GREEN
-    if (st === 'present') return YELLOW
-    if (st === 'absent') return GRAY
-    return '#818384'
-  }
-
-  const keyColorForRender = (key) => {
-    if (key === 'ENTER' || key === 'BACK') return '#818384'
-    return keyBg(key)
+    if (st === 'correct') {
+      return {
+        background: 'var(--tva-amber)',
+        color: 'var(--tva-bg)',
+        borderColor: 'var(--tva-amber)',
+      }
+    }
+    if (st === 'present') {
+      return {
+        background: 'var(--tva-amber-dim)',
+        color: 'var(--tva-amber-bright)',
+        borderColor: 'var(--tva-amber-dim)',
+      }
+    }
+    if (st === 'absent') {
+      return {
+        background: 'var(--tva-bg)',
+        color: 'var(--tva-amber-dim)',
+        borderColor: 'var(--tva-bg3)',
+      }
+    }
+    return {
+      background: 'var(--tva-bg3)',
+      color: 'var(--tva-amber)',
+      borderColor: 'var(--tva-border)',
+    }
   }
 
   const onKeyClick = (key) => {
@@ -285,38 +323,38 @@ export default function WordleScreen({ onSuccess }) {
   const tileStyle = (cell) => {
     if (cell.state === 'correct') {
       return {
-        borderColor: GREEN,
-        backgroundColor: GREEN,
-        color: '#fff',
+        borderColor: 'var(--tva-amber)',
+        backgroundColor: 'var(--tva-amber)',
+        color: 'var(--tva-bg)',
       }
     }
     if (cell.state === 'present') {
       return {
-        borderColor: YELLOW,
-        backgroundColor: YELLOW,
-        color: '#fff',
+        borderColor: 'var(--tva-amber-dim)',
+        backgroundColor: 'var(--tva-amber-dim)',
+        color: 'var(--tva-amber-bright)',
       }
     }
     if (cell.state === 'absent') {
       return {
-        borderColor: GRAY,
-        backgroundColor: GRAY,
-        color: '#fff',
+        borderColor: 'var(--tva-bg3)',
+        backgroundColor: 'var(--tva-bg3)',
+        color: 'var(--tva-amber-dim)',
       }
     }
 
     if (cell.letter && cell.state === 'filled') {
       return {
-        borderColor: '#666',
-        backgroundColor: 'transparent',
-        color: '#fff',
+        borderColor: 'var(--tva-amber-dim)',
+        backgroundColor: 'rgba(232,101,26,0.08)',
+        color: 'var(--tva-amber)',
       }
     }
 
     return {
-      borderColor: '#333',
+      borderColor: 'var(--tva-border)',
       backgroundColor: 'transparent',
-      color: '#fff',
+      color: 'var(--tva-amber)',
     }
   }
 
@@ -327,15 +365,10 @@ export default function WordleScreen({ onSuccess }) {
 
   const tileCssVars = (ri, ci) => {
     if (flippingRow !== ri || !pendingFlipResults) return {}
-    const st = pendingFlipResults[ci]
-    const bg = st === 'correct' ? GREEN : st === 'present' ? YELLOW : GRAY
-    return {
-      '--flip-mid-bg': bg,
-      '--flip-mid-border': bg,
-    }
+    return flipMidVars(pendingFlipResults[ci])
   }
 
-  const winMessageGreen = message === 'Access granted. Welcome.'
+  const isWinGlowMessage = message === WIN_MESSAGE
 
   const handleMotionComplete = useCallback(() => {
     if (fadeExitPendingRef.current && screenFadeOutRef.current) {
@@ -346,7 +379,6 @@ export default function WordleScreen({ onSuccess }) {
 
   return (
     <motion.div
-      className="wordle-screen"
       initial={{ opacity: 0 }}
       animate={screenFadeOut ? { opacity: 0 } : { opacity: 1 }}
       transition={
@@ -358,15 +390,17 @@ export default function WordleScreen({ onSuccess }) {
       style={{
         height: '100vh',
         width: '100%',
-        background: '#000',
+        background: 'var(--tva-bg)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px 16px',
+        gap: '12px',
+        padding: '12px 16px',
         boxSizing: 'border-box',
-        overflowY: 'auto',
-        fontFamily: '"JetBrains Mono", monospace',
+        overflow: 'hidden',
+        fontFamily: 'var(--tva-mono)',
+        color: 'var(--tva-amber)',
       }}
     >
       <style>{`
@@ -374,11 +408,13 @@ export default function WordleScreen({ onSuccess }) {
           0% {
             transform: rotateX(0deg);
             background-color: transparent;
-            border-color: #666;
+            border-color: var(--tva-border);
+            color: var(--tva-amber);
           }
           49.99% {
             background-color: transparent;
-            border-color: #666;
+            border-color: var(--tva-amber-dim);
+            color: var(--tva-amber);
           }
           50% {
             transform: rotateX(-90deg);
@@ -387,11 +423,13 @@ export default function WordleScreen({ onSuccess }) {
             transform: rotateX(-90deg);
             background-color: var(--flip-mid-bg);
             border-color: var(--flip-mid-border);
+            color: var(--flip-mid-color);
           }
           100% {
             transform: rotateX(0deg);
             background-color: var(--flip-mid-bg);
             border-color: var(--flip-mid-border);
+            color: var(--flip-mid-color);
           }
         }
         .wordle-tile-inner.wordle-tile-flipping {
@@ -408,44 +446,87 @@ export default function WordleScreen({ onSuccess }) {
           height: 46px;
           border-width: 2px;
           border-style: solid;
-          border-radius: 4px;
+          border-radius: 2px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-family: "Unbounded", sans-serif;
-          font-weight: 700;
-          font-size: 1.2rem;
+          font-family: var(--tva-display);
+          font-size: 24px;
           text-transform: uppercase;
           box-sizing: border-box;
         }
       `}</style>
 
-      <div
+      <header
         style={{
-          fontSize: '10px',
-          color: '#5a5a5a',
-          marginBottom: '6px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px',
+          width: '100%',
+          maxWidth: '520px',
         }}
       >
-        — solve puzzle to continue —
-      </div>
-      <div
-        style={{
-          fontSize: '9px',
-          color: '#4a4a4a',
-          marginBottom: '12px',
-          fontFamily: '"JetBrains Mono", monospace',
-        }}
-      >
-        hint: it&apos;s the guy who built this
-      </div>
+        <div
+          style={{
+            fontFamily: 'var(--tva-display)',
+            fontSize: '14px',
+            letterSpacing: '6px',
+            color: 'var(--tva-amber-dim)',
+            textAlign: 'center',
+          }}
+        >
+          TIME VARIANCE AUTHORITY
+        </div>
+        <div
+          style={{
+            fontFamily: 'var(--tva-mono)',
+            fontSize: '11px',
+            letterSpacing: '4px',
+            color: 'var(--tva-amber-dim)',
+            textAlign: 'center',
+          }}
+        >
+          // TEMPORAL SECURITY CLEARANCE //
+        </div>
+        <div
+          style={{
+            width: '320px',
+            height: '1px',
+            background: 'var(--tva-border)',
+            margin: '0 auto',
+          }}
+        />
+        <div
+          className="tva-glow"
+          style={{
+            fontFamily: 'var(--tva-display)',
+            fontSize: '28px',
+            letterSpacing: '3px',
+            textAlign: 'center',
+            color: 'var(--tva-amber)',
+          }}
+        >
+          ENTER VARIANT DESIGNATION TO PROCEED
+        </div>
+        <div
+          style={{
+            fontFamily: 'var(--tva-mono)',
+            fontSize: '10px',
+            letterSpacing: '2px',
+            color: 'var(--tva-amber-dim)',
+            textAlign: 'center',
+          }}
+        >
+          HINT: THE VARIANT WHO BUILT THIS DEVICE
+        </div>
+      </header>
 
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '6px',
-          marginBottom: '10px',
+          gap: '5px',
         }}
       >
         {grid.map((row, ri) => (
@@ -457,7 +538,7 @@ export default function WordleScreen({ onSuccess }) {
                 : { x: 0 }
             }
             transition={{ duration: 0.4, ease: 'easeInOut' }}
-            style={{ display: 'flex', gap: '6px' }}
+            style={{ display: 'flex', gap: '5px' }}
           >
             {row.map((cell, ci) => (
               <div key={`cell-${ri}-${ci}`} className="wordle-tile-wrap">
@@ -482,26 +563,29 @@ export default function WordleScreen({ onSuccess }) {
 
       <div
         style={{
-          minHeight: '22px',
+          minHeight: '24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          fontSize: '12px',
-          marginBottom: '10px',
-          color: winMessageGreen ? GREEN : '#c9c9c9',
+          fontFamily: 'var(--tva-mono)',
+          fontSize: '11px',
+          letterSpacing: '2px',
+          color: isWinGlowMessage ? 'var(--tva-amber)' : 'var(--tva-amber-dim)',
+          maxWidth: '480px',
         }}
+        className={isWinGlowMessage ? 'tva-glow' : undefined}
       >
         {message}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
         {[ROW1, ROW2, ROW3].map((row, idx) => (
           <div
             key={idx}
             style={{
               display: 'flex',
-              gap: '6px',
+              gap: '4px',
               justifyContent: 'center',
               flexWrap: 'wrap',
             }}
@@ -509,23 +593,33 @@ export default function WordleScreen({ onSuccess }) {
             {row.map((key) => {
               const wide = key === 'ENTER' || key === 'BACK'
               const label = key === 'BACK' ? '⌫' : key
+              const base = keyStyle(key)
               return (
                 <button
                   key={key + idx}
                   type="button"
                   onClick={() => onKeyClick(key)}
+                  onMouseEnter={(e) => {
+                    if (keyboardColors[key]) return
+                    e.currentTarget.style.background = 'var(--tva-bg2)'
+                    e.currentTarget.style.borderColor = 'var(--tva-amber-dim)'
+                  }}
+                  onMouseLeave={(e) => {
+                    const s = keyStyle(key)
+                    e.currentTarget.style.background = s.background
+                    e.currentTarget.style.borderColor = s.borderColor
+                  }}
                   style={{
-                    fontFamily: '"JetBrains Mono", monospace',
-                    background: keyColorForRender(key),
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    height: '44px',
-                    minWidth: wide ? '52px' : '32px',
-                    padding: wide ? '0 12px' : '0 6px',
-                    fontSize: key === 'ENTER' ? '10px' : '13px',
-                    fontWeight: 500,
+                    fontFamily: 'var(--tva-mono)',
+                    fontSize: wide ? '10px' : '12px',
+                    height: '34px',
+                    minWidth: wide ? '56px' : '36px',
+                    padding: wide ? '0 10px' : '0 6px',
                     cursor: 'pointer',
+                    borderRadius: '2px',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    ...base,
                   }}
                 >
                   {label}
@@ -535,6 +629,37 @@ export default function WordleScreen({ onSuccess }) {
           </div>
         ))}
       </div>
+
+      <footer
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+          width: '100%',
+          marginTop: '8px',
+        }}
+      >
+        <div
+          style={{
+            width: '320px',
+            height: '1px',
+            background: 'var(--tva-border)',
+            margin: '0 auto',
+          }}
+        />
+        <div
+          style={{
+            fontFamily: 'var(--tva-mono)',
+            fontSize: '9px',
+            letterSpacing: '3px',
+            color: 'var(--tva-amber-dim)',
+            textAlign: 'center',
+          }}
+        >
+          TVA // TIME VARIANCE AUTHORITY // EST. BEFORE TIME ITSELF
+        </div>
+      </footer>
     </motion.div>
   )
 }
