@@ -59,13 +59,12 @@ export default function AboutSite() {
 
       <div style={STAMP}>// INSPIRATION //</div>
       <div style={P}>
-        {`Loki is one of my favorite shows ever made. The world-building,
-the aesthetic, the character arcs — it all hit different. The TVA,
-the TemPad, Miss Minutes — there's something about that retro-futurist
-bureaucratic world that stuck with me long after watching.
+        {`Loki is, no glaze, one of my favorite shows ever made. Elite world-building,
+elite aesthetic, and elite character arcs in both seasons. The whole retro-futurist
+bureaucratic-world style was already the theme of my phone, so...
 
 When it came time to build a portfolio, I kept coming back to that
-aesthetic. Why make something generic when you can make something that
+aesthetic. Why make something generic when you can make something impressive AND that
 actually means something to you? So here we are.`}
       </div>
 
