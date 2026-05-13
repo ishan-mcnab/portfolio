@@ -53,6 +53,44 @@ body::before {
   z-index: 9998;
 }
 
+/* CRT FLICKER on entire viewport */
+@keyframes crtFlicker {
+  0%   { opacity: 1; }
+  19%  { opacity: 1; }
+  20%  { opacity: 0.92; }
+  21%  { opacity: 1; }
+  49%  { opacity: 1; }
+  50%  { opacity: 0.96; }
+  51%  { opacity: 1; }
+  74%  { opacity: 1; }
+  75%  { opacity: 0.88; }
+  76%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* STATIC NOISE overlay */
+@keyframes staticNoise {
+  0%   { transform: translateY(0px); }
+  10%  { transform: translateY(-2px); }
+  20%  { transform: translateY(1px); }
+  30%  { transform: translateY(-1px); }
+  40%  { transform: translateY(2px); }
+  50%  { transform: translateY(0px); }
+  60%  { transform: translateY(1px); }
+  70%  { transform: translateY(-2px); }
+  80%  { transform: translateY(0px); }
+  90%  { transform: translateY(1px); }
+  100% { transform: translateY(0px); }
+}
+
+/* HORIZONTAL SCAN LINE that drifts down */
+@keyframes scanDrift {
+  0%   { top: -10%; opacity: 0; }
+  5%   { opacity: 0.04; }
+  95%  { opacity: 0.04; }
+  100% { top: 110%; opacity: 0; }
+}
+
 /* CRT FLICKER ANIMATION */
 @keyframes tvaFlicker {
   0%   { opacity: 1; }
