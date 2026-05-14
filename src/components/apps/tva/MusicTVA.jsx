@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react'
 import { config } from '../../../content.js'
 
 export default function MusicTVA() {
+  const [nowPlaying, setNowPlaying] = useState(null)
+  const [loading, setLoading] = useState(true)
+
   const music = config.music ?? {
     favoriteArtists: [],
     favoriteTracks: [],
@@ -8,7 +12,23 @@ export default function MusicTVA() {
   }
   const artists = music.favoriteArtists ?? []
   const tracks = music.favoriteTracks ?? []
-  const spotifyUrl = music.spotifyUrl ?? ''
+
+  useEffect(() => {
+    async function fetchNowPlaying() {
+      try {
+        const res = await fetch('/api/spotify')
+        const data = await res.json()
+        setNowPlaying(data)
+      } catch (e) {
+        setNowPlaying(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchNowPlaying()
+    const interval = setInterval(fetchNowPlaying, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <>
@@ -47,121 +67,65 @@ export default function MusicTVA() {
               marginBottom: '12px',
             }}
           >
-            // NOW PLAYING // SPOTIFY INTEGRATION PENDING //
+            // NOW PLAYING //
           </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '16px',
-              alignItems: 'center',
-            }}
-          >
-            <div
-              style={{
-                width: '72px',
-                height: '72px',
-                background: 'var(--tva-bg2)',
-                border: '1px solid var(--tva-border)',
-                flexShrink: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '28px',
-                color: 'var(--tva-amber)',
-              }}
-            >
-              ♪
+          {loading ? (
+            <div style={{ fontFamily: 'var(--tva-mono)', fontSize: '12px',
+              color: 'var(--tva-amber-dim)', padding: '20px' }}>
+              // ACCESSING SPOTIFY...
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontFamily: 'var(--tva-display)',
-                  fontSize: '14px',
-                  color: 'var(--tva-amber-dim)',
-                  marginBottom: '4px',
-                }}
-              >
-                — connect spotify to display —
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--tva-mono)',
-                  fontSize: '11px',
-                  color: 'var(--tva-amber-dim)',
-                }}
-              >
-                spotify integration coming soon
-              </div>
-              <div
-                style={{
-                  width: '100%',
-                  height: '2px',
-                  background: 'var(--tva-border)',
-                  marginTop: '10px',
-                }}
-              >
-                <div
-                  style={{
-                    width: '0%',
-                    height: '100%',
-                    background: 'var(--tva-amber)',
-                  }}
+          ) : nowPlaying?.title ? (
+            <div style={{
+              display: 'flex', gap: '16px', alignItems: 'center',
+              padding: '16px', border: '1px solid var(--tva-border)',
+              background: 'var(--tva-bg3)', marginBottom: '20px',
+            }}>
+              {nowPlaying.albumArt && (
+                <img
+                  src={nowPlaying.albumArt}
+                  alt="album art"
+                  style={{ width: '64px', height: '64px', objectFit: 'cover',
+                    border: '1px solid var(--tva-border)', flexShrink: 0 }}
                 />
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: 'var(--tva-mono)', fontSize: '9px',
+                  color: 'var(--tva-amber-dim)', letterSpacing: '3px', marginBottom: '6px' }}>
+                  {nowPlaying.isPlaying ? '// NOW PLAYING //' : '// LAST PLAYED //'}
+                </div>
+                <div style={{ fontFamily: 'var(--tva-display)', fontSize: '20px',
+                  color: 'var(--tva-amber)', letterSpacing: '1px', marginBottom: '4px',
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {nowPlaying.title}
+                </div>
+                <div style={{ fontFamily: 'var(--tva-mono)', fontSize: '12px',
+                  color: 'var(--tva-amber-dim)', marginBottom: '4px' }}>
+                  {nowPlaying.artist}
+                </div>
+                <div style={{ fontFamily: 'var(--tva-mono)', fontSize: '10px',
+                  color: 'var(--tva-amber-dim)', opacity: 0.6 }}>
+                  {nowPlaying.album}
+                </div>
               </div>
-              <div
-                style={{
-                  fontFamily: 'var(--tva-mono)',
-                  fontSize: '9px',
-                  color: 'var(--tva-amber-dim)',
-                  marginTop: '4px',
-                }}
+              <a
+                href={nowPlaying.songUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontFamily: 'var(--tva-mono)', fontSize: '10px',
+                  color: 'var(--tva-amber-dim)', textDecoration: 'none',
+                  border: '1px solid var(--tva-border)', padding: '4px 8px',
+                  flexShrink: 0 }}
               >
-                0:00 / 0:00
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '16px',
-                  marginTop: '8px',
-                  fontSize: '16px',
-                  color: 'var(--tva-amber-dim)',
-                }}
-              >
-                <span>⏮</span>
-                <span>▶</span>
-                <span>⏭</span>
-              </div>
+                [ → OPEN ]
+              </a>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                if (spotifyUrl) {
-                  window.open(spotifyUrl, '_blank', 'noopener,noreferrer')
-                }
-              }}
-              style={{
-                fontFamily: 'var(--tva-mono)',
-                fontSize: '10px',
-                color: 'var(--tva-bg)',
-                border: '1px solid var(--tva-border)',
-                padding: '6px 12px',
-                cursor: 'pointer',
-                background: 'var(--tva-amber)',
-                flexShrink: 0,
-                alignSelf: 'flex-start',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.9'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1'
-              }}
-            >
-              Open Spotify →
-            </button>
-          </div>
+          ) : (
+            <div style={{ fontFamily: 'var(--tva-mono)', fontSize: '12px',
+              color: 'var(--tva-amber-dim)', padding: '20px',
+              border: '1px solid var(--tva-border)', marginBottom: '20px' }}>
+              // NO RECENT ACTIVITY DETECTED
+            </div>
+          )}
         </div>
 
         <div
