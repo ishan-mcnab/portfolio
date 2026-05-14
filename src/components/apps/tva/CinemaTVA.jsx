@@ -85,6 +85,7 @@ function FilmLeaderboard({ items, emptyLine1, emptyLine2 }) {
         borderRight: '1px solid var(--tva-border)',
         display: 'flex',
         flexDirection: 'column',
+        height: '100%',
         overflow: 'hidden',
       }}
     >
@@ -214,6 +215,7 @@ function TvLeaderboard({ items, emptyLine1, emptyLine2 }) {
         borderRight: '1px solid var(--tva-border)',
         display: 'flex',
         flexDirection: 'column',
+        height: '100%',
         overflow: 'hidden',
       }}
     >
@@ -339,19 +341,40 @@ export default function CinemaTVA() {
   const tvShows = useMemo(() => rated.filter((r) => r.type === 'TV'), [rated])
 
   return (
-    <>
+    <div
+      style={{
+        flex: 1,
+        minHeight: 0,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      <div style={{
+        padding: '12px 20px',
+        borderBottom: '1px solid var(--tva-border)',
+        flexShrink: 0,
+        fontFamily: 'var(--tva-mono)',
+        fontSize: '12px',
+        color: 'var(--tva-amber-dim)',
+        letterSpacing: '2px',
+      }}>
+        // Ranking everything I've watched + my future watchlist
+      </div>
       <style>{`
         .tva-cinema-scroll::-webkit-scrollbar {
           width: 4px;
         }
         .tva-cinema-scroll::-webkit-scrollbar-thumb {
-          background: var(--tva-border);
+          background: var(--tva-amber-dim);
         }
       `}</style>
       <div
         style={{
           flex: 1,
-          minHeight: 'min(420px, 50vh)',
+          minHeight: 0,
+          height: '100%',
           display: 'flex',
           flexDirection: 'row',
           background: 'var(--tva-bg2)',
@@ -375,6 +398,7 @@ export default function CinemaTVA() {
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
+            height: '100%',
             overflow: 'hidden',
           }}
         >
@@ -470,6 +494,6 @@ export default function CinemaTVA() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

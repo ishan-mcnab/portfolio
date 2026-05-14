@@ -58,6 +58,7 @@ export default function TVACaseFile({ action, onClose, overlayZIndex = 500 }) {
   const act = displayAction.action
   const title = displayActionName(act)
   const caseSuffix = act.toUpperCase().replace(/[^A-Z0-9]/g, '-')
+  const isCinema = section === 'entertainment' && act === 'cinema'
 
   function renderBody() {
     const key = `${section}:${act}`
@@ -82,7 +83,19 @@ export default function TVACaseFile({ action, onClose, overlayZIndex = 500 }) {
       case 'athletics:lifting_workouts':
         return <WorkoutsTVA />
       case 'entertainment:cinema':
-        return <CinemaTVA />
+        return (
+          <div
+            style={{
+              flex: 1,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+            }}
+          >
+            <CinemaTVA />
+          </div>
+        )
       case 'entertainment:music':
         return <MusicTVA />
       case 'entertainment:book_log':
@@ -207,28 +220,33 @@ export default function TVACaseFile({ action, onClose, overlayZIndex = 500 }) {
           style={{
             flex: 1,
             minHeight: 0,
-            padding: '32px',
+            height: isCinema ? '100%' : undefined,
+            padding: isCinema ? 0 : '32px',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
             gap: '16px',
           }}
         >
-          <div
-            style={{
-              fontFamily: 'var(--tva-display)',
-              fontSize: '32px',
-              color: 'var(--tva-amber)',
-              flexShrink: 0,
-            }}
-          >
-            {title}
-          </div>
+          {action.action !== 'cinema' && (
+            <div
+              style={{
+                fontFamily: 'var(--tva-display)',
+                fontSize: '32px',
+                color: 'var(--tva-amber)',
+                flexShrink: 0,
+              }}
+            >
+              {title}
+            </div>
+          )}
           <div
             style={{
               flex: 1,
               minHeight: 0,
-              overflowY: 'auto',
+              overflow: isCinema ? 'hidden' : 'auto',
+              display: isCinema ? 'flex' : undefined,
+              flexDirection: isCinema ? 'column' : undefined,
             }}
           >
             {renderBody()}
